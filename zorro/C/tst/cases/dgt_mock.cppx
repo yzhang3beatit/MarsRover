@@ -1,0 +1,19 @@
+/*
+ * DgtMock.cpp
+ *
+ */
+
+#include "dgt_mock.h"
+
+DGTMock* DGTMock::instance = NULL;
+
+phys_address_t own_unit_mb_addr;
+unit_type_t  unit_existence(unit_type_t	unit_type, unit_index_t	unit_index)
+{
+    return dgt_mock_instance.unit_existence(unit_type, unit_index);
+}
+
+unit_state_t unit_state_by_mb(unit_address_t	mb_address )
+{
+	return dgt_mock_instance.unit_state_by_mb(mb_address);
+}

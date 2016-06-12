@@ -1,0 +1,93 @@
+#include "rover.h"
+
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
+// Tests factorial of negative numbers.
+//
+using ::testing::_;
+using ::testing::SetArgPointee;
+using ::testing::DoAll;
+using ::testing::Return;
+using ::testing::Pointee;
+
+
+class rover_test : public testing::Test
+{
+public:
+	rover_t apple_;
+	char location_[10];
+	const char *NORTH;
+	const char *WEST;
+	const char *SOUTH;
+	const char *EAST;
+
+
+	virtual void SetUp() {
+		char set_loc[] = "1,1";
+
+		NORTH = "1,2";
+		WEST = "0,1";
+		SOUTH = "1,0";
+		EAST = "2,1";
+
+		init_rover(&apple_);
+		EXPECT_TRUE(set_location(&apple_, set_loc));
+	}
+	virtual void TearDown() {/*DGTMock::destroyInstance();*/}
+};
+
+
+TEST_F(rover_test, RoverLandingAtZeroByDefault)
+{
+	init_rover(&apple_);
+	EXPECT_STREQ("0,0", get_location(&apple_, location_));
+}
+
+TEST_F(rover_test, RoverLandingBySetting)
+{
+	EXPECT_STREQ("1,1", get_location(&apple_, location_));
+}
+
+TEST_F(rover_test, RoverMoveForwardNorthByDefault)
+{
+	rover_move(&apple_, "M");
+	EXPECT_STREQ(NORTH, get_location(&apple_, location_));
+}
+
+TEST_F(rover_test, RoverTurnRightMoveForwardEast)
+{
+	rover_move(&apple_, "RM");
+	EXPECT_STREQ(EAST, get_location(&apple_, location_));
+}
+
+TEST_F(rover_test, RoverTurnRightTwiceMoveForwardSouth)
+{
+	rover_move(&apple_, "RRM");
+	EXPECT_STREQ(SOUTH, get_location(&apple_, location_));
+
+}
+
+TEST_F(rover_test, RoverTurnRight3TimesMoveForwardWest)
+{
+	rover_move(&apple_, "RRRM");
+	EXPECT_STREQ(WEST, get_location(&apple_, location_));
+
+}
+
+TEST_F(rover_test, RoverTurnLeftMoveForwardWest)
+{
+	rover_move(&apple_, "LM");
+	EXPECT_STREQ(WEST, get_location(&apple_, location_));
+}
+
+TEST_F(rover_test, RoverTurnLeftTwiceMoveForwardSouth)
+{
+	rover_move(&apple_, "LLM");
+	EXPECT_STREQ(SOUTH, get_location(&apple_, location_));
+}
+
+TEST_F(rover_test, RoverTurnLeft3TimesMoveForwardEast)
+{
+	rover_move(&apple_, "LLLM");
+	EXPECT_STREQ(EAST, get_location(&apple_, location_));
+}
