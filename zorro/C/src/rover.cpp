@@ -1,63 +1,75 @@
 #include <stdio.h>
 
-#include "direction.h"
 #include "rover.h"
 
-static void move_forward(rover_t *rover);
-static void turn_right(rover_t *rover);
-static void turn_left(rover_t *rover);
+static void move_forward(coord_t *rover);
+static void turn_right(coord_t *rover);
+static void turn_left(coord_t *rover);
 
 void init_rover(rover_t *rover)
 {
-	rover->x = 0;
-	rover->y = 0;
-	init_default_dir(&rover->direction);
+	init_coord(&rover->loc);
+	rover->map_fun = NULL;
+	rover->map = NULL;
 }
 
 bool set_location(rover_t *rover, const char *loc)
 {
 	int ret;
-	ret = sscanf(loc, "%d,%d", &rover->x, &rover->y);
-	if(ret != 2)
+	int x, y;
+	char d;
+
+	ret = sscanf(loc, "%d,%d,%c", &x, &y, &d);
+	if(ret != 3)
 		return false;
+
+	set_coord(&(rover->loc), x, y);
+	set_orient(&(rover->loc), d);
 
 	return true;
 }
 
 char *get_location(rover_t *rover, char *location)
 {
-	sprintf(location, "%d,%d", rover->x, rover->y);
-	return location;
+	return get_coord(&(rover->loc), location);
+}
+
+void load_map(rover_t *rover, maping map_fun, map_t *map)
+{
+	rover->map_fun = map_fun;
+	rover->map = map;
 }
 
 void rover_move(rover_t *rover, const char *directive)
 {
 	for(const char *str = directive; *str != '\0'; str++){
 		if(*str == 'M'){
-			move_forward(rover);
+			move_forward(&(rover->loc));
+			if (rover->map_fun)
+				rover->map_fun(rover->map, &(rover->loc));
 		} else if(*str == 'R'){
-			turn_right(rover);
+			turn_right(&(rover->loc));
 		} else if(*str == 'L'){
-			turn_left(rover);
+			turn_left(&(rover->loc));
 		}
 	}
 }
 
-static void move_forward(rover_t *rover)
+static void move_forward(coord_t *rover)
 {
 	int delta_x, delta_y;
 
-	get_direction_delta(rover->direction, &delta_x, &delta_y);
-	rover->x += delta_x;
-	rover->y += delta_y;
+	get_direction_delta(rover->orie, &delta_x, &delta_y);
+	rover->horizon += delta_x;
+	rover->vertical += delta_y;
 }
 
-static void turn_right(rover_t *rover)
+static void turn_right(coord_t *rover)
 {
-	direction_turn_right(&rover->direction);
+	direction_turn_right((int*)&rover->orie);
 }
 
-static void turn_left(rover_t *rover)
+static void turn_left(coord_t *rover)
 {
-	direction_turn_left(&rover->direction);
+	direction_turn_left((int*)&rover->orie);
 }

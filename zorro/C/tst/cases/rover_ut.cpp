@@ -15,7 +15,7 @@ class rover_test : public testing::Test
 {
 public:
 	rover_t apple_;
-	char location_[10];
+	char location_[LOC_LEN];
 	const char *NORTH;
 	const char *WEST;
 	const char *SOUTH;
@@ -23,7 +23,7 @@ public:
 
 
 	virtual void SetUp() {
-		char set_loc[] = "1,1";
+		char set_loc[] = "1,1,N";
 
 		NORTH = "1,2";
 		WEST = "0,1";

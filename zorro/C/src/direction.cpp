@@ -1,11 +1,11 @@
 #include "direction.h"
 
-void init_default_dir(int *direction)
+void init_default_dir(DIRECTION *direction)
 {
 	*direction = NORTH;
 }
 
-void get_direction_delta(int direction, int *delta_x, int *delta_y)
+void get_direction_delta(DIRECTION direction, int *delta_x, int *delta_y)
 {
 	switch(direction)
 	{
@@ -36,7 +36,7 @@ void get_direction_delta(int direction, int *delta_x, int *delta_y)
 
 void direction_turn_right(int *direction)
 {
-	*direction = (*direction + 1) % 4;
+	*direction = (*direction + (DIRECTION)1) % 4;
 }
 
 void direction_turn_left(int *direction)
