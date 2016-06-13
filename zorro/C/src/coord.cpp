@@ -45,3 +45,9 @@ char *get_coord(coord_t *coord, char *loc)
 
 	return loc;
 }
+
+bool match_coord(coord_t *expect, coord_t *actual)
+{
+	return expect->horizon == actual->horizon &&
+			expect->vertical == actual->vertical;
+}

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "rover.h"
 
@@ -9,7 +10,6 @@ static void turn_left(coord_t *rover);
 void init_rover(rover_t *rover)
 {
 	init_coord(&rover->loc);
-	rover->map_fun = NULL;
 	rover->map = NULL;
 }
 
@@ -34,25 +34,45 @@ char *get_location(rover_t *rover, char *location)
 	return get_coord(&(rover->loc), location);
 }
 
-void load_map(rover_t *rover, maping map_fun, map_t *map)
+void load_map(rover_t *rover, map_t *map)
 {
-	rover->map_fun = map_fun;
 	rover->map = map;
 }
 
-void rover_move(rover_t *rover, const char *directive)
+int rover_move(rover_t *rover, const char *directive)
 {
+	coord_t prev_loc;
+	int ret = 0;
+
 	for(const char *str = directive; *str != '\0'; str++){
 		if(*str == 'M'){
+			memcpy(&prev_loc, &(rover->loc), sizeof(rover->loc));
 			move_forward(&(rover->loc));
-			if (rover->map_fun)
-				rover->map_fun(rover->map, &(rover->loc));
+			if(rover->map)
+			{
+			    rover->map->map_fun(rover->map, &(rover->loc));
+			    if(rover->map->obst_fun(rover->map, &(rover->loc)))
+			    {
+			    	printf("rover->loc %d,%d", rover->loc.horizon, rover->loc.vertical);
+			    	memcpy(&(rover->loc), &prev_loc, sizeof(rover->loc));
+			    	ret = -1;
+			    	break;
+			    }
+			}
+
 		} else if(*str == 'R'){
 			turn_right(&(rover->loc));
 		} else if(*str == 'L'){
 			turn_left(&(rover->loc));
 		}
 	}
+
+	if(ret == -1)
+		add_obst(rover->map, &(prev_loc));
+	else
+		add_obst(rover->map, &(rover->loc));
+
+	return ret;
 }
 
 static void move_forward(coord_t *rover)

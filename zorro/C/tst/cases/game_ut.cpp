@@ -28,8 +28,8 @@ TEST(game_test, gameExamples)
 
 	game_set_locations(&game, "1,2,N,3,3,E");
 	EXPECT_STREQ("1,2;3,3", get_rovers_in_game(&game, location_));
-	EXPECT_EQ(true, rover_move_in_game(&game, 0, "LMLMLMLMM"));
-	EXPECT_EQ(true, rover_move_in_game(&game, 1, "MMRMMRMRRM"));
+	EXPECT_EQ(SUCCESSFUL, rover_move_in_game(&game, 0, "LMLMLMLMM"));
+	EXPECT_EQ(SUCCESSFUL, rover_move_in_game(&game, 1, "MMRMMRMRRM"));
 	EXPECT_STREQ("1,3;5,1", get_rovers_in_game(&game, location_));
 }
 
@@ -51,35 +51,35 @@ public:
 TEST_F(game_wrap_test, RoverMoveFromNorthEdgeToSouthEdge)
 {
 	game_set_locations(&game, "2,10,N");
-	EXPECT_EQ(true, rover_move_in_game(&game, 0, "M"));
+	EXPECT_EQ(SUCCESSFUL, rover_move_in_game(&game, 0, "M"));
 	EXPECT_STREQ("2,0", get_rovers_in_game(&game, location_));
 }
 
 TEST_F(game_wrap_test, RoverMoveFromEastEdgeToWestEdge)
 {
 	game_set_locations(&game, "5,4,E");
-	EXPECT_EQ(true, rover_move_in_game(&game, 0, "M"));
+	EXPECT_EQ(SUCCESSFUL, rover_move_in_game(&game, 0, "M"));
 	EXPECT_STREQ("0,4", get_rovers_in_game(&game, location_));
 }
 
 TEST_F(game_wrap_test, RoverMoveFromSouthEdgeToNorthEdge)
 {
 	game_set_locations(&game, "2,0,S");
-	EXPECT_EQ(true, rover_move_in_game(&game, 0, "M"));
+	EXPECT_EQ(SUCCESSFUL, rover_move_in_game(&game, 0, "M"));
 	EXPECT_STREQ("2,10", get_rovers_in_game(&game, location_));
 }
 
 TEST_F(game_wrap_test, RoverMoveFromWestEdgeToEastEdge)
 {
 	game_set_locations(&game, "0,4,W");
-	EXPECT_EQ(true, rover_move_in_game(&game, 0, "M"));
+	EXPECT_EQ(SUCCESSFUL, rover_move_in_game(&game, 0, "M"));
 	EXPECT_STREQ("5,4", get_rovers_in_game(&game, location_));
 }
 
 TEST_F(game_wrap_test, RoverMoveFailedForWrongIndex)
 {
 	game_set_locations(&game, "2,9,N");
-	EXPECT_EQ(false, rover_move_in_game(&game, 1, "M"));
+	EXPECT_EQ(ROVER_INDEX_ERR, rover_move_in_game(&game, 1, "M"));
 	EXPECT_STREQ("2,9", get_rovers_in_game(&game, location_));
 }
 
@@ -93,8 +93,20 @@ public:
 	char location_[LOC_LEN];
 	virtual void SetUp() {
 		init_game(&game);
-		set_map_in_game(&game, 10, 10);
+		set_map_in_game(&game, 1, 1);
 
 	}
 	virtual void TearDown() {/*DGTMock::destroyInstance();*/}
 };
+
+TEST_F(game_obstacle_test, rover_raise_alarm_in_smallest_map)
+{
+	char obst[LOC_LEN];
+	char location_[10];
+
+	game_set_locations(&game, "0,0,N,0,0,N");
+	EXPECT_EQ(SUCCESSFUL, rover_move_in_game(&game, 0, "M"));
+	EXPECT_EQ(ENCOUNTER_OBSTACLE_ERR, rover_move_in_game(&game, 1, "M"));
+	EXPECT_STREQ("0,1;0,0", get_rovers_in_game(&game, location_));
+	EXPECT_STREQ("0,1;0,0", get_all_obst(&(game.map), location_));
+}

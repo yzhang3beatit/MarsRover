@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "map.h"
 
@@ -15,6 +16,11 @@ void init_map(map_t *map)
 	map->north_edge = 0;
 	map->east_edge = 0;
 	map->west_edge = 0;
+	memset(map->obst, 0, sizeof(map->obst));
+	map->obst_num = 0;
+
+	map->map_fun = (maping)find_location_in_map;
+	map->obst_fun = (obstacle)examine_obst;
 }
 
 int get_free_size(map_t *map)
@@ -59,4 +65,42 @@ static void wrapping_east_west(map_t *map, coord_t *loc)
 
 	if (loc->horizon < map->west_edge)
 		loc->horizon = map->east_edge;
+}
+
+bool examine_obst(map_t *map, coord_t *loc)
+{
+	for(int i = 0; i < map->obst_num; i++)
+	{
+		if(match_coord(loc, &(map->obst[i])))
+			return true;
+	}
+	return false;
+}
+
+void add_obst(map_t *map, coord_t *loc)
+{
+	if(!map)
+		return;
+	if(!examine_obst(map, loc))
+        memcpy(&(map->obst[map->obst_num++]), loc, sizeof(*loc));
+}
+
+const char* get_all_obst(map_t *map, char* loc)
+{
+	coord_t *obst = map->obst;
+	char *ptr = loc;
+
+	for(int i = 0; i < map->obst_num; obst = &(map->obst[++i]))
+	{
+		if(i > 0)
+		{
+			*ptr = ';';
+			ptr++;
+		}
+		get_coord(obst, ptr);
+		ptr += strlen(ptr);
+	}
+
+	return loc;
+
 }
