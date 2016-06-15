@@ -90,11 +90,6 @@ static const char* get_location_from(const char* locs, char *loc, int max)
 
 }
 
-void cancel_obstacle(game_t *game)
-{
-	game->flag = NO_OBSTACLE;
-}
-
 const char *get_game_obstacle(game_t *game, char *output)
 {
 	return get_obstacle_in_map(&(game->map), output);

@@ -28,7 +28,6 @@ TEST(game_test, gameExamples)
 
 	init_game(&game);
 	set_map_in_game(&game, 10, 10);
-	cancel_obstacle(&game);
 
 	game_set_locations(&game, "1,2,N,3,3,E");
 	EXPECT_STREQ("1,2;3,3", get_rovers_in_game(&game, location_));

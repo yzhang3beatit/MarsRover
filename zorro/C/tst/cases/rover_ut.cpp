@@ -10,6 +10,12 @@ using ::testing::DoAll;
 using ::testing::Return;
 using ::testing::Pointee;
 
+TEST(rover_failed_test, RoverSetLocationFailedLackOfOriend)
+{
+	rover_t apple;
+	init_rover(&apple);
+	EXPECT_FALSE(set_location(&apple, "0,0"));
+}
 
 class rover_test : public testing::Test
 {

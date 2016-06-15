@@ -35,11 +35,6 @@ void insert_rover_list(rover_t *rover_list, rover_t *rover)
 	insert_coord_list(&(rover_list->loc), &(rover->loc));
 }
 
-const char *get_location(rover_t *rover, char *location)
-{
-	return get_coords(&(rover->loc), 1, location);
-}
-
 const char *get_rover_loc(rover_t *rover, int num, char *location)
 {
 	return get_coords(&(rover->loc), num, location);
