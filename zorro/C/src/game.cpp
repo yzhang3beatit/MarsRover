@@ -11,10 +11,11 @@ void init_game(game_t *def_game)
 	for(int i = 0; i < MAX_ROVER; i++)
 	{
 		init_rover(&(def_game->rovers[i]));
-		load_map(&(def_game->rovers[i]), find_location_in_map, &(def_game->map));
+		def_game->rovers[i].map = &(def_game->map);
 	}
 	def_game->rover_num = 0;
 	set_map_in_game(def_game, 5, 5);
+	def_game->flag = 0;
 }
 
 void set_map_in_game(game_t *game, int h_axis, int v_axis)
@@ -25,21 +26,7 @@ void set_map_in_game(game_t *game, int h_axis, int v_axis)
 
 const char *get_rovers_in_game(game_t *game, char *loc)
 {
-	rover_t *rover = game->rovers;
-	char *ptr = loc;
-
-	for(int i = 0; i < game->rover_num; rover = &(game->rovers[++i]))
-	{
-		if(i > 0)
-		{
-			*ptr = ';';
-			ptr++;
-		}
-		get_location(rover, ptr);
-		ptr += strlen(ptr);
-	}
-
-	return loc;
+	return get_rover_loc(game->rovers, game->rover_num, loc);
 }
 
 void game_set_locations(game_t *game, const char *locs)
@@ -58,20 +45,23 @@ void game_set_locations(game_t *game, const char *locs)
     	game->rover_num++;
 
 		set_location(rover, loc);
+		insert_rover_list(game->rovers, rover);
 		if(*ptr == '\0')
 			break;
 		i++;
 	}
 }
 
-bool rover_move_in_game(game_t *game, int index, const char* directive)
+int rover_move_in_game(game_t *game, int index, const char* directive)
 {
 	if(index >= game->rover_num)
-		return false;
+		return INVALID_INDEX_ERR;
 
-	rover_move(&(game->rovers[index]), directive);
+	if(!rover_move(&(game->rovers[index]), directive))
+		if(game->flag != NO_OBSTACLE)
+			return ENCOUNTER_OBSTACLE_ERR;
 
-	return true;
+	return SUCCESSFUL;
 }
 
 static const char* get_location_from(const char* locs, char *loc, int max)
@@ -98,4 +88,14 @@ static const char* get_location_from(const char* locs, char *loc, int max)
 
 	return ptr;
 
+}
+
+void cancel_obstacle(game_t *game)
+{
+	game->flag = NO_OBSTACLE;
+}
+
+const char *get_game_obstacle(game_t *game, char *output)
+{
+	return get_obstacle_in_map(&(game->map), output);
 }

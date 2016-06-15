@@ -15,6 +15,8 @@ void init_map(map_t *map)
 	map->north_edge = 0;
 	map->east_edge = 0;
 	map->west_edge = 0;
+	init_obst(&(map->obst));
+	init_coord(&(map->start_point));
 }
 
 int get_free_size(map_t *map)
@@ -59,4 +61,21 @@ static void wrapping_east_west(map_t *map, coord_t *loc)
 
 	if (loc->horizon < map->west_edge)
 		loc->horizon = map->east_edge;
+}
+
+bool encounter_obst(map_t *map, coord_t *coord)
+{
+	return found_obst_in_list(&(map->obst), coord);
+}
+
+void add_obst_in_map(map_t *map, coord_t *new_obst)
+{
+	if(is_same_coord(&(map->start_point), new_obst))
+		return;
+	add_obst(&(map->obst), new_obst);
+}
+
+const char* get_obstacle_in_map(map_t *map, char *output)
+{
+	return get_obst(&(map->obst), output);
 }

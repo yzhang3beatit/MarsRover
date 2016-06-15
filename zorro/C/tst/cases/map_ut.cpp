@@ -42,7 +42,7 @@ TEST_F(map_test, SetMapSize)
 
 TEST_F(map_test, WrapFromNorthEdgeToSouthEdge)
 {
-	coord_t north_edge = {2, 6, NORTH};
+	coord_t north_edge = {2, 6, NORTH, NULL};
 
 	find_location_in_map(&map_, &north_edge);
 	EXPECT_EQ(2, north_edge.horizon);
@@ -52,7 +52,7 @@ TEST_F(map_test, WrapFromNorthEdgeToSouthEdge)
 
 TEST_F(map_test, WrapFromSouthEdgeToNorthEdge)
 {
-	coord_t south_edge = {2, -1, SOUTH};
+	coord_t south_edge = {2, -1, SOUTH, NULL};
 
 	find_location_in_map(&map_, &south_edge);
 	EXPECT_EQ(2, south_edge.horizon);
@@ -62,7 +62,7 @@ TEST_F(map_test, WrapFromSouthEdgeToNorthEdge)
 
 TEST_F(map_test, WrapFromEastEdgeToWestEdge)
 {
-	coord_t east_edge = {6, 2, EAST};
+	coord_t east_edge = {6, 2, EAST, NULL};
 
 	find_location_in_map(&map_, &east_edge);
 	EXPECT_EQ(0, east_edge.horizon);
@@ -72,7 +72,7 @@ TEST_F(map_test, WrapFromEastEdgeToWestEdge)
 
 TEST_F(map_test, WrapFromWestEdgeToEastEdge)
 {
-	coord_t west_edge = {-1, 2, WEST};
+	coord_t west_edge = {-1, 2, WEST, NULL};
 
 	find_location_in_map(&map_, &west_edge);
 	EXPECT_EQ(5, west_edge.horizon);

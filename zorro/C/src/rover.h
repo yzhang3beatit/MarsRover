@@ -3,7 +3,6 @@
 typedef struct _SRover
 {
 	coord_t loc;
-	maping map_fun;
 	map_t *map;
 }rover_t;
 
@@ -11,6 +10,6 @@ typedef struct _SRover
 
 extern void init_rover(rover_t *rover);
 extern bool set_location(rover_t *rover, const char *location);
-extern char *get_location(rover_t *rover, char *location);
-extern void rover_move(rover_t *rover, const char *directive);
-extern void load_map(rover_t *rover, maping map_fun, map_t *map);
+extern bool rover_move(rover_t *rover, const char *directive);
+extern void insert_rover_list(rover_t *rover_list, rover_t *rover);
+extern const char *get_rover_loc(rover_t *rover, int num, char *location);
